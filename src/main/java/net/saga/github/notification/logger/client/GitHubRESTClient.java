@@ -63,7 +63,7 @@ public class GitHubRESTClient {
             GitHubResponse response = new GitHubResponse();
             URIBuilder uriBuilder = new URIBuilder(API_URL_BASE).setPath(notificiationPath);
             uriBuilder.addParameter("all", request.all + "");
-            uriBuilder.addParameter("partificpating", request.partificpating + "");
+            uriBuilder.addParameter("participating", request.participating + "");
             uriBuilder.addParameter("since", request.since);
             uriBuilder.addParameter("before", request.before);
             
@@ -93,15 +93,17 @@ public class GitHubRESTClient {
     public static class GitHubNotificationRequest {
 
         private final boolean all;
-        private final boolean partificpating;
+        private final boolean participating;
         private final String since;
         private final String before;
-
-        GitHubNotificationRequest(boolean all, boolean partificpating, String since, String before) {
+        private final String token;
+        
+        GitHubNotificationRequest(boolean all, boolean partificpating, String since, String before, String token) {
             this.all = all;
-            this.partificpating = partificpating;
+            this.participating = partificpating;
             this.since = since;
             this.before = before;
+            this.token = token;
         }
 
     }

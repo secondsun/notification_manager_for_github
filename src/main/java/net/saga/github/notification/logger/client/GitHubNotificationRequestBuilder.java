@@ -28,10 +28,12 @@ public class GitHubNotificationRequestBuilder {
 
     private boolean all = false;
     private boolean partificpating = false;
+    private final GitHubToken token;
     private ZonedDateTime since = ZonedDateTime.now();
     private ZonedDateTime before = ZonedDateTime.now();
 
-    public GitHubNotificationRequestBuilder() {
+    public GitHubNotificationRequestBuilder(GitHubToken token ) {
+        this.token = token;
     }
 
     public GitHubNotificationRequestBuilder setAll(boolean all) {
@@ -65,7 +67,7 @@ public class GitHubNotificationRequestBuilder {
         final String sinceString = since.format(DateTimeFormatter.ofPattern(GitHubRESTClient.DATE_TIME_FORMAT));
         final String beforeString = before.format(DateTimeFormatter.ofPattern(GitHubRESTClient.DATE_TIME_FORMAT));
                         
-        return new GitHubRESTClient.GitHubNotificationRequest(all, partificpating, sinceString, beforeString);
+        return new GitHubRESTClient.GitHubNotificationRequest(all, partificpating, sinceString, beforeString, token.toString());
     }
     
 }

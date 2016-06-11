@@ -20,7 +20,16 @@ package net.saga.github.notification.logger.rest;
 
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import net.saga.github.notification.logger.vo.ApplicationAccount;
 
+/**
+ * This service manages Accounts.  This includes configuring an ApplicationAccount
+ * with github information.
+ * 
+ * It is the only Service that can be accessed anonymously.
+ * 
+ * @author summers
+ */
 @Path("/accounts")
 public class Accounts {
     

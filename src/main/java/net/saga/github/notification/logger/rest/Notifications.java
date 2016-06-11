@@ -34,6 +34,9 @@ import net.saga.github.notification.logger.client.GitHubRESTClient;
 
 /**
  *
+ * This service will be responsible for CRUD operations on notifications
+ * downloaded from GitHub.
+ *
  * @author summers
  */
 @Path("/notifications")
@@ -46,6 +49,10 @@ public class Notifications {
     private GitHubRESTClient githubClient;
 
     @GET
+    /**
+     * Currently, this loads notifications from GitHub, however it should load 
+     * notifications which have already been fetched from the database.
+     */
     public void getNotifications(@Suspended final AsyncResponse asyncResponse) {
         asyncResponse.setTimeout(5, TimeUnit.SECONDS);
         executor.submit(() -> {
@@ -53,11 +60,11 @@ public class Notifications {
                 asyncResponse.resume(
                         githubClient.getNotifications(
                                 new GitHubNotificationRequestBuilder()
-                                        .setSince(ZonedDateTime.now().minusYears(1))
-                                        .setAll(true)
-                                        .setPartificpating(true)
-                                    .createGitHubNotificationRequest()
-                                ).get().toString()
+                                .setSince(ZonedDateTime.now().minusYears(1))
+                                .setAll(true)
+                                .setPartificpating(true)
+                                .createGitHubNotificationRequest()
+                        ).get().toString()
                 );
             } catch (Exception ex) {
                 Logger.getLogger(Notifications.class.getName()).log(Level.SEVERE, null, ex);

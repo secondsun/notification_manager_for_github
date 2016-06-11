@@ -25,7 +25,7 @@ import javax.ws.rs.core.Application;
  *
  * @author summers
  */
-@javax.ws.rs.ApplicationPath("api")
+@javax.ws.rs.ApplicationPath("api/s")
 public class ApplicationConfig extends Application {
 
     @Override

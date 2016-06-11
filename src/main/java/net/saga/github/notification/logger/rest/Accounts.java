@@ -26,7 +26,6 @@ import net.saga.github.notification.logger.vo.ApplicationAccount;
  * This service manages Accounts.  This includes configuring an ApplicationAccount
  * with github information.
  * 
- * It is the only Service that can be accessed anonymously.
  * 
  * @author summers
  */

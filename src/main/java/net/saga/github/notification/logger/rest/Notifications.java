@@ -19,18 +19,16 @@
 package net.saga.github.notification.logger.rest;
 
 import java.time.ZonedDateTime;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.container.AsyncResponse;
-import javax.ws.rs.container.Suspended;
+import javax.ws.rs.Produces;
+import net.saga.github.notification.logger.beans.NotificationsUser;
 import net.saga.github.notification.logger.client.GitHubNotificationRequestBuilder;
 import net.saga.github.notification.logger.client.GitHubRESTClient;
+import net.saga.github.notification.logger.vo.GitHubResponse;
 
 /**
  *
@@ -48,29 +46,28 @@ public class Notifications {
     @Inject
     private GitHubRESTClient githubClient;
 
+    @Inject
+    private NotificationsUser user;
+
     @GET
+    @Produces(value = "application/json")
     /**
-     * Currently, this loads notifications from GitHub, however it should load 
+     * Currently, this loads notifications from GitHub, however it should load
      * notifications which have already been fetched from the database.
      */
-    public void getNotifications(@Suspended final AsyncResponse asyncResponse) {
-        asyncResponse.setTimeout(5, TimeUnit.SECONDS);
-        executor.submit(() -> {
-            try {
-                asyncResponse.resume(
-                        githubClient.getNotifications(
-                                new GitHubNotificationRequestBuilder()
-                                .setSince(ZonedDateTime.now().minusYears(1))
-                                .setAll(true)
-                                .setPartificpating(true)
-                                .createGitHubNotificationRequest()
-                        ).get().toString()
-                );
-            } catch (Exception ex) {
-                Logger.getLogger(Notifications.class.getName()).log(Level.SEVERE, null, ex);
-                asyncResponse.resume(ex);
-            }
-        });
+    public GitHubResponse getNotifications() {
+        try {
+            return githubClient.getNotifications(
+                    new GitHubNotificationRequestBuilder(user.getGitHubToken())
+                    .setSince(ZonedDateTime.now().minusYears(1))
+                    .setAll(true)
+                    .setPartificpating(true)
+                    .createGitHubNotificationRequest()
+            ).get();
+        } catch (Exception ignore) {
+            return null;
+        }
+
     }
 
 }

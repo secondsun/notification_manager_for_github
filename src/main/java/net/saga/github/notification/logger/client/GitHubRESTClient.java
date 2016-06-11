@@ -49,7 +49,6 @@ public class GitHubRESTClient {
     private static final String AUTHZ_HEADER_TEMPLATE = " token %s";
     private static final String USER_AGENT = "Notification Fetcher by secondsun";
 
-    private static final String TOKEN = "";
     
     @Resource
     private ManagedExecutorService executor;
@@ -71,7 +70,7 @@ public class GitHubRESTClient {
             
             HttpGet get = new HttpGet(uri);
             get.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
-            get.addHeader(HttpHeaders.AUTHORIZATION, String.format(AUTHZ_HEADER_TEMPLATE, TOKEN));
+            get.addHeader(HttpHeaders.AUTHORIZATION, String.format(AUTHZ_HEADER_TEMPLATE, request.token));
             get.addHeader(HttpHeaders.ACCEPT, ACCEPT_HEADER);
             
             try (CloseableHttpClient client = HttpClients.createDefault()) {

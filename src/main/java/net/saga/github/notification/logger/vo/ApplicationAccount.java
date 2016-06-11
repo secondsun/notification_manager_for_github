@@ -19,28 +19,58 @@
 package net.saga.github.notification.logger.vo;
 
 import java.io.Serializable;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.xml.bind.annotation.XmlTransient;
+import net.saga.github.notification.logger.client.GitHubToken;
 
 /**
  *
  * @author summers
  */
 @Entity
+@Access(AccessType.FIELD)
 public class ApplicationAccount implements Serializable {
 
     @Id
+    @GeneratedValue
     private Long id;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public ApplicationAccount setId(Long id) {
         this.id = id;
+        return this;
     }
     
     private String userName;
+    private String gitHubToken;
     
+    public String getUserName() {
+        return userName;
+    }
+
+    public ApplicationAccount setUserName(String userName) {
+        this.userName = userName;
+        return this;
+    }
+
+    public String getGitHubToken() {
+        return gitHubToken;
+    }
+
+    public ApplicationAccount setGitHubToken(String gitHubToken) {
+        this.gitHubToken = gitHubToken;
+        return this;
+    }
     
+    @XmlTransient
+    public GitHubToken getGitHubTokenValue() {
+        return GitHubToken.stringToGitHubToken(gitHubToken);
+    }
 }

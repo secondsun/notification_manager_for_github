@@ -19,8 +19,6 @@
 package net.saga.github.notification.logger.rest;
 
 import java.time.ZonedDateTime;
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -39,9 +37,6 @@ import net.saga.github.notification.logger.vo.GitHubResponse;
  */
 @Path("/notifications")
 public class Notifications {
-
-    @Resource
-    private ManagedExecutorService executor;
 
     @Inject
     private GitHubRESTClient githubClient;

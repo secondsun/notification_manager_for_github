@@ -19,11 +19,9 @@
 package net.saga.github.notification.logger.beans;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import net.saga.github.notification.logger.client.GitHubToken;
 import static net.saga.github.notification.logger.util.AccountUtils.loadUserName;

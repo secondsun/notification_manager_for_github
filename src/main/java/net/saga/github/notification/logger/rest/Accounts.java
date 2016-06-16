@@ -26,7 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
-import net.saga.github.notification.logger.beans.AccountDao;
+import net.saga.github.notification.logger.beans.dao.AccountDao;
 import static net.saga.github.notification.logger.util.AccountUtils.loadUserName;
 import net.saga.github.notification.logger.vo.ApplicationAccount;
 

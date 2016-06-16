@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package net.saga.github.notification.logger.beans;
+package net.saga.github.notification.logger.beans.dao;
 
+import java.util.List;
 import java.util.Optional;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -53,6 +54,10 @@ public class AccountDao {
         } else {
             em.persist(account);
         }
+    }
+    
+    public List<ApplicationAccount> findAll() {
+        return em.createQuery("from ApplicationAccount acct", ApplicationAccount.class).getResultList();
     }
     
 }

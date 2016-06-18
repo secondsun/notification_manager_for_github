@@ -18,15 +18,15 @@
  */
 package net.saga.github.notification.logger.rest;
 
-import java.time.ZonedDateTime;
+import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import net.saga.github.notification.logger.beans.NotificationsUser;
-import net.saga.github.notification.logger.client.GitHubNotificationRequestBuilder;
-import net.saga.github.notification.logger.client.GitHubRESTClient;
-import net.saga.github.notification.logger.vo.GitHubResponse;
+import net.saga.github.notification.logger.beans.dao.NotificationDao;
+import net.saga.github.notification.logger.vo.notification.Notification;
+import net.saga.github.notification.logger.vo.notification.NotificationMetaData;
 
 /**
  *
@@ -38,31 +38,42 @@ import net.saga.github.notification.logger.vo.GitHubResponse;
 @Path("/notifications")
 public class Notifications {
 
-    @Inject
-    private GitHubRESTClient githubClient;
 
     @Inject
     private NotificationsUser user;
 
+    @Inject
+    private NotificationDao notificationDao;
+    
     @GET
     @Produces(value = "application/json")
     /**
      * Currently, this loads notifications from GitHub, however it should load
      * notifications which have already been fetched from the database.
      */
-    public GitHubResponse getNotifications() {
+    public List<Notification> getNotifications() {
         try {
-            return githubClient.getNotifications(
-                    new GitHubNotificationRequestBuilder(user.getGitHubToken())
-                    .setSince(ZonedDateTime.now().minusYears(1))
-                    .setAll(true)
-                    .setPartificpating(true)
-                    .createGitHubNotificationRequest()
-            ).get();
+            return notificationDao.findForUser(user.getUserName());
         } catch (Exception ignore) {
             return null;
         }
 
     }
 
+    @Path("/meta")
+    @GET
+    @Produces(value = "application/json")
+    /**
+     * Currently, this loads notifications from GitHub, however it should load
+     * notifications which have already been fetched from the database.
+     */
+    public NotificationMetaData getMetaData() {
+        try {
+            return notificationDao.getMetaDataFor(user.getAccount());
+        } catch (Exception ignore) {
+            return null;
+        }
+
+    }
+    
 }

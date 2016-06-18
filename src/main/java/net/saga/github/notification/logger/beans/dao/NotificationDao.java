@@ -18,15 +18,56 @@
  */
 package net.saga.github.notification.logger.beans.dao;
 
+import java.util.List;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import net.saga.github.notification.logger.vo.ApplicationAccount;
+import net.saga.github.notification.logger.vo.notification.Notification;
+import net.saga.github.notification.logger.vo.notification.NotificationMetaData;
 
+@Stateless
 public class NotificationDao {
 
     @PersistenceContext
     private EntityManager em;
+
+    public NotificationMetaData getMetaDataFor(ApplicationAccount account) {
+        try {
+        return em.createQuery("from NotificationMetaData meta where meta.applicationAccount.id = :accountId", 
+                              NotificationMetaData.class)
+                .setParameter("accountId", account.getId())
+                .getSingleResult();
+        } catch (NoResultException exception) {
+            return new NotificationMetaData(account);
+        }
+    }
+
     
-    
+    @Transactional
+    public void saveOrUpdate(NotificationMetaData meta) {
+        if (meta.getId() != null) {
+            em.merge(meta);
+        } else {
+            em.persist(meta);
+        }
+    }
+
+    @Transactional
+    public void saveAll(List<Notification> notifications, String userId) {
+        notifications.forEach((notification)->{
+            notification.setUserId(userId);
+            em.persist(notification);
+        });
+    }
+
+    public List<Notification> findForUser(String userName) {
+        return em.createQuery("from Notification n where n.userId = :userId", Notification.class)
+                .setParameter("userId", userName)
+                .getResultList();
+    }
     
     
 }

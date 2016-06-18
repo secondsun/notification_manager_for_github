@@ -60,4 +60,10 @@ public class NotificationsUser {
     public GitHubToken getGitHubToken() {
         return account.getGitHubTokenValue();
     }
+    
+    public ApplicationAccount getAccount() {
+        return account;
+    }
+
+    
 }

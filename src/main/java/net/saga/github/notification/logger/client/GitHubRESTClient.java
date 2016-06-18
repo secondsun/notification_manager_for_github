@@ -19,6 +19,7 @@
 package net.saga.github.notification.logger.client;
 
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.concurrent.Future;
 import javax.annotation.Resource;
@@ -66,9 +67,20 @@ public class GitHubRESTClient {
             uriBuilder.addParameter("since", request.since);
             uriBuilder.addParameter("before", request.before);
             
+            
+            
             URI uri = uriBuilder.build();
             
             HttpGet get = new HttpGet(uri);
+            
+            if (!request.eTag.isEmpty()) {
+                get.addHeader(HttpHeaders.IF_NONE_MATCH, request.eTag);    
+            }
+            
+            if (!request.lastModified.isEmpty()) {
+                get.addHeader(HttpHeaders.IF_MODIFIED_SINCE, request.lastModified);    
+            }
+            
             get.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
             get.addHeader(HttpHeaders.AUTHORIZATION, String.format(AUTHZ_HEADER_TEMPLATE, request.token));
             get.addHeader(HttpHeaders.ACCEPT, ACCEPT_HEADER);
@@ -77,7 +89,7 @@ public class GitHubRESTClient {
                 try (CloseableHttpResponse httpResponse = client.execute(get)) {
                     String stringResponse = IOUtils.toString(httpResponse.getEntity().getContent(), Charset.forName("UTF-8"));
                     response.setBody(stringResponse);
-                    response.setHeaders(httpResponse.getAllHeaders());
+                    response.loadHeaders(httpResponse.getAllHeaders());
                 }
             }
             
@@ -85,6 +97,33 @@ public class GitHubRESTClient {
         });
 
     }
+
+    @Asynchronous
+    public Future<GitHubResponse> getNotifications(URL next, GitHubToken token) {
+
+        return executor.submit(() -> {
+            GitHubResponse response = new GitHubResponse();
+
+            HttpGet get = new HttpGet(next.toURI());
+            
+            
+            get.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
+            get.addHeader(HttpHeaders.AUTHORIZATION, String.format(AUTHZ_HEADER_TEMPLATE, token));
+            get.addHeader(HttpHeaders.ACCEPT, ACCEPT_HEADER);
+            
+            try (CloseableHttpClient client = HttpClients.createDefault()) {
+                try (CloseableHttpResponse httpResponse = client.execute(get)) {
+                    String stringResponse = IOUtils.toString(httpResponse.getEntity().getContent(), Charset.forName("UTF-8"));
+                    response.setBody(stringResponse);
+                    response.loadHeaders(httpResponse.getAllHeaders());
+                }
+            }
+            
+            return response;
+        });
+
+    }
+
 
     /**
      * See https://developer.github.com/v3/activity/notifications/
@@ -96,14 +135,18 @@ public class GitHubRESTClient {
         private final String since;
         private final String before;
         private final String token;
-        
-        GitHubNotificationRequest(boolean all, boolean partificpating, String since, String before, String token) {
+        private final String eTag;
+        private final String lastModified; 
+        GitHubNotificationRequest(boolean all, boolean partificpating, String since, String before, String token, String eTag, String lastModified) {
             this.all = all;
             this.participating = partificpating;
             this.since = since;
             this.before = before;
             this.token = token;
+            this.eTag = eTag;
+            this.lastModified = lastModified;
         }
+
 
     }
 

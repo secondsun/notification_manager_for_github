@@ -18,7 +18,6 @@
  */
 package net.saga.github.notification.logger.client;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.validation.constraints.NotNull;
@@ -27,11 +26,13 @@ import javax.validation.constraints.NotNull;
 public class GitHubNotificationRequestBuilder {
 
     private boolean all = false;
-    private boolean partificpating = false;
+    private boolean participating = false;
     private final GitHubToken token;
     private ZonedDateTime since = ZonedDateTime.now();
     private ZonedDateTime before = ZonedDateTime.now();
-
+    private String eTag = "";
+    private String lastModified = "";
+    
     public GitHubNotificationRequestBuilder(GitHubToken token ) {
         this.token = token;
     }
@@ -41,8 +42,8 @@ public class GitHubNotificationRequestBuilder {
         return this;
     }
 
-    public GitHubNotificationRequestBuilder setPartificpating(boolean partificpating) {
-        this.partificpating = partificpating;
+    public GitHubNotificationRequestBuilder setParticipating(boolean participating) {
+        this.participating = participating;
         return this;
     }
 
@@ -62,12 +63,28 @@ public class GitHubNotificationRequestBuilder {
         return this;
     }
 
+    public void seteTag(@NotNull String eTag) {
+        if (eTag == null) {
+            throw new IllegalArgumentException("eTag should not be null");
+        }
+        this.eTag = eTag;
+    }
+
+    public void setLastModified(@NotNull String lastModified) {
+        if (lastModified == null) {
+            throw new IllegalArgumentException("lastModified should not be null");
+        }
+        this.lastModified = lastModified;
+    }
+
+    
+    
     public GitHubRESTClient.GitHubNotificationRequest createGitHubNotificationRequest() {
         
         final String sinceString = since.format(DateTimeFormatter.ofPattern(GitHubRESTClient.DATE_TIME_FORMAT));
         final String beforeString = before.format(DateTimeFormatter.ofPattern(GitHubRESTClient.DATE_TIME_FORMAT));
                         
-        return new GitHubRESTClient.GitHubNotificationRequest(all, partificpating, sinceString, beforeString, token.toString());
+        return new GitHubRESTClient.GitHubNotificationRequest(all, participating, sinceString, beforeString, token.toString(), eTag, lastModified);
     }
     
 }

@@ -1,14 +1,14 @@
-package net.saga.github.notification.logger.realtime.action;
+package net.saga.github.notification.logger.realtime.signal;
 
 import java.io.Serializable;
 
 
-public abstract class BaseAction implements Serializable {
+public abstract class BaseSignal implements Serializable {
     
     private final String id;
     private final String type;
     
-    public BaseAction(String id, String type) {
+    public BaseSignal(String id, String type) {
         this.id = id;
         this.type = type;
     }

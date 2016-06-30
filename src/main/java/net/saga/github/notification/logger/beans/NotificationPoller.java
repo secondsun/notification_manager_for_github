@@ -17,11 +17,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import net.saga.github.notification.logger.beans.dao.AccountDao;
-import net.saga.github.notification.logger.beans.dao.NotificationDao;
+import net.saga.github.notification.logger.beans.dao.NotificationService;
 import net.saga.github.notification.logger.client.GitHubNotificationRequestBuilder;
 import net.saga.github.notification.logger.client.GitHubRESTClient;
+import net.saga.github.notification.logger.realtime.signal.NewNotificationSignal;
+import net.saga.github.notification.logger.realtime.signal.UpdatedNotificationSignal;
 import net.saga.github.notification.logger.vo.ApplicationAccount;
 import net.saga.github.notification.logger.vo.GitHubResponse;
 import net.saga.github.notification.logger.vo.notification.Notification;
@@ -42,11 +45,12 @@ public class NotificationPoller {
     private AccountDao accountDao;
 
     @Inject
-    private NotificationDao notificationDao;
+    private NotificationService notificationDao;
 
     @Inject
     private GitHubRESTClient githubClient;
 
+    
     @Schedule(minute = "*/1", hour = "*")
     public void update() {
         List<ApplicationAccount> accounts = accountDao.findAll();
@@ -85,7 +89,7 @@ public class NotificationPoller {
                     }
 
                     metaData.setLastTested(ZonedDateTime.now());
-                    notificationDao.saveAll(notifications, account.getUserName());
+                    notificationDao.performUpdate(notifications, account.getUserName());
                 }
                 notificationDao.saveOrUpdate(metaData);
 

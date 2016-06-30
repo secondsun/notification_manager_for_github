@@ -64,5 +64,8 @@ RUN sed -i -e 's/<drivers>/&\n <driver name="postgresql" module="postgresql">   
 
 RUN sed -i -e 's/<server name="default-server">/&<https-listener name="https" socket-binding="https" security-realm="AeroGearRealm"\/>/' $JBOSS_HOME/standalone/configuration/standalone.xml
 
+EXPOSE 80
+EXPOSE 443
+
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0", "--debug"]
 

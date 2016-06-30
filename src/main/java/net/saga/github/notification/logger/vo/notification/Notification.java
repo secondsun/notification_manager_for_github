@@ -18,13 +18,18 @@
  */
 package net.saga.github.notification.logger.vo.notification;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.net.URL;
 import java.time.ZonedDateTime;
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import net.saga.github.notification.logger.vo.NotificationSubject;
 import net.saga.github.notification.logger.vo.Repository;
 
@@ -33,12 +38,30 @@ import net.saga.github.notification.logger.vo.Repository;
  * @author summers
  */
 @Entity
+@Table(indexes = {@Index(name = "notification_id", unique = true, columnList = "id, userId")})
 public class Notification implements Serializable {
-    
-        
+
     @Id
+    @GeneratedValue
+    @JsonIgnore
+    private Long jpaId;
+
     private Long id;
 
+    @ManyToOne
+    private Repository repository;
+
+    @Embedded
+    private NotificationSubject subject;
+
+    private String reason;
+    private boolean unread;
+    private ZonedDateTime updated_at;
+    private ZonedDateTime last_read_at;
+
+    private String userId;
+
+    private URL url;
 
     public Long getId() {
         return id;
@@ -48,21 +71,13 @@ public class Notification implements Serializable {
         this.id = id;
     }
 
+    public Long getJpaId() {
+        return jpaId;
+    }
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private Repository repository;
-    
-    @ManyToOne(cascade = CascadeType.ALL)
-    private NotificationSubject subject;
-    
-    private String reason;
-    private boolean unread;
-    private ZonedDateTime updated_at;
-    private ZonedDateTime last_read_at;
-    
-    private String userId;
-    
-    private URL url;
+    public void setJpaId(Long jpaId) {
+        this.jpaId = jpaId;
+    }
 
     public Repository getRepository() {
         return repository;
@@ -127,11 +142,15 @@ public class Notification implements Serializable {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    
-    
-    
-    
-        
-    
+
+    public static Notification shallowClone(Notification notification) {
+        Notification toReturn = new Notification();
+        toReturn.id = notification.id;
+        toReturn.reason = notification.reason;
+        toReturn.unread = notification.unread;
+        toReturn.userId = notification.userId;
+        return toReturn;
+    }
     
 }
+

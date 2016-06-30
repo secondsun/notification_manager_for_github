@@ -18,24 +18,30 @@
  */
 package net.saga.github.notification.logger.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.net.URL;
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  *
  * @author summers
  */
 @Entity
+@Table(indexes = {@Index(unique = true, columnList = "id, owner_login")})
 public class Repository implements Serializable {
 
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long jpaId;
 
     public Long getJpaId() {
@@ -56,7 +62,8 @@ public class Repository implements Serializable {
         this.id = id;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name="owner_login", referencedColumnName = "login")
     private GitHubUser owner;
 
     private String name;

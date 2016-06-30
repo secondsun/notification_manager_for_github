@@ -18,6 +18,7 @@
  */
 package net.saga.github.notification.logger.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -37,6 +38,7 @@ public class ApplicationAccount implements Serializable {
 
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
 
     public Long getId() {

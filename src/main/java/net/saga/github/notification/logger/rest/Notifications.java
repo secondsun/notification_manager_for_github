@@ -24,7 +24,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import net.saga.github.notification.logger.beans.NotificationsUser;
-import net.saga.github.notification.logger.beans.dao.NotificationDao;
+import net.saga.github.notification.logger.beans.dao.NotificationService;
 import net.saga.github.notification.logger.vo.notification.Notification;
 import net.saga.github.notification.logger.vo.notification.NotificationMetaData;
 
@@ -43,7 +43,7 @@ public class Notifications {
     private NotificationsUser user;
 
     @Inject
-    private NotificationDao notificationDao;
+    private NotificationService notificationDao;
     
     @GET
     @Produces(value = "application/json")

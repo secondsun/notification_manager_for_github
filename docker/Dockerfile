@@ -42,7 +42,6 @@ EXPOSE 9990
 
 # Add a management user named 'admin' 
 RUN /opt/jboss/wildfly/bin/add-user.sh -u admin -p admin --silent
-
 # expose debug port
 EXPOSE 8787
 
@@ -60,6 +59,7 @@ RUN sed -i -e 's/<extensions>/&\n        <extension module="org.keycloak.keycloa
 
 RUN sed -i -e 's/<drivers>/&\n <driver name="postgresql" module="postgresql">                    	<driver-class>org.postgresql.Driver<\/driver-class>                    	<xa-datasource-class>org.postgresql.xa.PGXADataSource<\/xa-datasource-class>	                <\/driver>/' $JBOSS_HOME/standalone/configuration/standalone.xml
 
+RUN sed -i -e 's/<datasources>/&\n<datasource jndi-name="java:jboss\/datasources\/GithubNotificationsDS" enabled="true" use-java-context="true" pool-name="GithubNotificationsDSDS" use-ccm="true">                     <connection-url>jdbc:mysql:\/\/${env.DOCKER_NOTIFICATIONDB_1_PORT_5432_TCP_ADDR}:${env.DOCKER_NOTIFICATIONDB_1_PORT_5432_TCP_PORT}\/${env.DOCKER_NOTIFICATIONDB_1_ENV_POSTGRES_DB}<\/connection-url>                     <driver>postgresql<\/driver>                     <security>                       <user-name>${env.DOCKER_NOTIFICATIONDB_1_ENV_POSTGRES_USER}<\/user-name>                       <password>${env.DOCKER_NOTIFICATIONDB_1_ENV_POSTGRES_PASSWORD}<\/password>                     <\/security>                     <pool>                         <flush-strategy>IdleConnections<\/flush-strategy>                     <\/pool>                 <\/datasource>/' $JBOSS_HOME/standalone/configuration/standalone.xml
 
 
 RUN sed -i -e 's/<server name="default-server">/&<https-listener name="https" socket-binding="https" security-realm="AeroGearRealm"\/>/' $JBOSS_HOME/standalone/configuration/standalone.xml

@@ -1,0 +1,13 @@
+# $JBOSS_HOME/bin/jboss-cli.sh --file=/path/to/this/file.
+connect
+batch
+
+## Add Postgresql driver
+/subsystem=datasources/jdbc-driver=psqlup:add(driver-name=psqlup,driver-module-name=org.postgresql,driver-xa-datasource-class-name=org.postgresql.xa.PGXADataSource)
+
+## Add  Datasource
+data-source add --name=GithubNotificationsDS --driver-name=psqlup --jndi-name=java:jboss/datasources/GithubNotificationsDS --connection-url=jdbc:postgresql://localhost:5432/notifications --user-name=notifications --password=notifications --use-ccm=false --max-pool-size=25 --blocking-timeout-wait-millis=5000
+data-source enable --name=GithubNotificationsDS
+
+run-batch
+#:reload

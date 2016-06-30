@@ -40,18 +40,6 @@ import javax.persistence.Table;
 public class Repository implements Serializable {
 
     @Id
-    @GeneratedValue
-    @JsonIgnore
-    private Long jpaId;
-
-    public Long getJpaId() {
-        return jpaId;
-    }
-
-    public void setJpaId(Long jpaId) {
-        this.jpaId = jpaId;
-    }
-
     private Long id;
 
     public Long getId() {

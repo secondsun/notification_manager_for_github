@@ -152,19 +152,13 @@
                         <password>sa</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:jboss/datasources/UnifiedPushDS" enabled="true" use-java-context="true" pool-name="UnifiedPushDS" use-ccm="true">
-                     <connection-url>jdbc:mysql://${env.UNIFIEDPUSH_PORT_3306_TCP_ADDR}:${env.UNIFIEDPUSH_PORT_3306_TCP_PORT}/${env.UNIFIEDPUSH_ENV_MYSQL_DATABASE}?useUnicode=true&amp;characterEncoding=UTF-8</connection-url>
-                     <driver>mysql</driver>
+                <datasource jndi-name="java:jboss/datasources/GithubNotificationsDS" enabled="true" use-java-context="true" pool-name="GithubNotificationsDSDS" use-ccm="true">
+                     <connection-url>jdbc:mysql://${env.NOTIFICATIONDB_PORT_3306_TCP_ADDR}:${env.NOTIFICATIONDB_PORT_3306_TCP_PORT}/${env.NOTIFICATIONDB_ENV_POSTGRES_DB}</connection-url>
+                     <driver>postgresql</driver>
                      <security>
-                       <user-name>${env.UNIFIEDPUSH_ENV_MYSQL_USER}</user-name>
-                       <password>${env.UNIFIEDPUSH_ENV_MYSQL_PASSWORD}</password>
+                       <user-name>${env.NOTIFICATIONDB_ENV_POSTGRES_USER}</user-name>
+                       <password>${env.NOTIFICATIONDB_ENV_POSTGRES_PASSWORD}</password>
                      </security>
-                     <validation>
-                         <check-valid-connection-sql>SELECT 1</check-valid-connection-sql>
-                         <background-validation>true</background-validation>
-                         <background-validation-millis>60000</background-validation-millis>
-                         <!--<validate-on-match>true</validate-on-match>-->
-                     </validation>
                      <pool>
                          <flush-strategy>IdleConnections</flush-strategy>
                      </pool>

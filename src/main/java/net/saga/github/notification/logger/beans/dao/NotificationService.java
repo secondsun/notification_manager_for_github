@@ -46,11 +46,11 @@ public class NotificationService {
     @Inject
     @NewNotificationEvent
     private Event<NewNotificationSignal> newNotification;
-    
+
     @Inject
     @UpdatedNotificationEvent
     private Event<UpdatedNotificationSignal> updatedNotification;
-    
+
     public NotificationMetaData getMetaDataFor(ApplicationAccount account) {
         try {
             return em.createQuery("from NotificationMetaData meta where meta.applicationAccount.id = :accountId",
@@ -91,8 +91,10 @@ public class NotificationService {
                 GitHubUser user = repo.getOwner();
                 repo.setOwner(findOrCreate(user));
                 notification.setRepository(findOrCreate(repo));
-                
+
                 em.persist(notification);
+                em.flush();
+
             } else if (result.size() > 1) {
                 throw new RuntimeException(String.format("Found multiple notifications for id %s and userId %s", notification.getId(), userId));
             } else {
@@ -103,6 +105,8 @@ public class NotificationService {
                 persistedNotification.setUpdated_at(notification.getUpdated_at());
                 persistedNotification.setUrl(notification.getUrl());
                 em.merge(persistedNotification);
+                em.flush();
+
                 emitUpdate(persistedNotification);
             }
 
@@ -119,7 +123,8 @@ public class NotificationService {
         GitHubUser persistedUser = em.find(GitHubUser.class, object.getId());
         if (persistedUser == null) {
             em.persist(object);
-            persistedUser =  em.find(GitHubUser.class, object.getId());
+            em.flush();
+            persistedUser = em.find(GitHubUser.class, object.getId());
         }
         return persistedUser;
     }
@@ -128,7 +133,8 @@ public class NotificationService {
         Repository persistedRepository = em.find(Repository.class, object.getId());
         if (persistedRepository == null) {
             em.persist(object);
-            persistedRepository =  em.find(Repository.class, object.getId());
+            em.flush();
+            persistedRepository = em.find(Repository.class, object.getId());
         }
         return persistedRepository;
     }
@@ -140,6 +146,5 @@ public class NotificationService {
     private void emitUpdate(Notification persistedNotification) {
         updatedNotification.fire(new UpdatedNotificationSignal(UUID.randomUUID().toString(), persistedNotification));
     }
-
 
 }

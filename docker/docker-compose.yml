@@ -1,0 +1,19 @@
+notificationDB:
+  image: postgres:9.6
+  environment:
+   - POSTGRES_PASSWORD=notifications
+   - POSTGRES_USER=notifications
+   - POSTGRES_DB=notifications
+  ports:
+  - 5432:5432
+github_notifications:
+  image: github_notifications
+  links:
+    - notificationDB:notificationDB
+  ports:
+  - 8443:8443
+  - 8080:8080
+  - 8787:8787
+  - 9990:9990
+  - 80:80
+  - 443:443

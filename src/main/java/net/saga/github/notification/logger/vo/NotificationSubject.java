@@ -20,6 +20,7 @@ package net.saga.github.notification.logger.vo;
 
 import java.io.Serializable;
 import java.net.URL;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
@@ -30,6 +31,8 @@ import javax.persistence.Embeddable;
 public class NotificationSubject implements Serializable {
 
     private String title;
+    
+    @Column(name = "subject_url")
     private URL url;
     private URL latest_comment_url;
     private String type;

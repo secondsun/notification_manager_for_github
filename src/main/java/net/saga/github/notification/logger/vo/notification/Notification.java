@@ -148,6 +148,7 @@ public class Notification implements Serializable {
         toReturn.reason = notification.reason;
         toReturn.unread = notification.unread;
         toReturn.userId = notification.userId;
+        toReturn.subject = notification.subject;
         return toReturn;
     }
     

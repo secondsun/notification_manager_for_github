@@ -102,6 +102,7 @@ public class NotificationService {
                 persistedNotification.setLast_read_at(notification.getLast_read_at());
                 persistedNotification.setReason(notification.getReason());
                 persistedNotification.setUnread(notification.isUnread());
+                persistedNotification.setSubject(notification.getSubject());
                 persistedNotification.setUpdated_at(notification.getUpdated_at());
                 persistedNotification.setUrl(notification.getUrl());
                 em.merge(persistedNotification);

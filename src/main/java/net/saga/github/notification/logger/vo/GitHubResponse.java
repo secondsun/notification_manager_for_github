@@ -98,7 +98,11 @@ public class GitHubResponse implements Serializable {
     }
     
     public String getETag() {
-        return ofNullable(headers.getFirst("ETag").replace("\"", "")).orElse("");
+        try {
+            return ofNullable(headers.getFirst("ETag").replace("\"", "")).orElse("");
+        } catch (NullPointerException ignore)  {
+            return "";
+        }
     }
     
 }

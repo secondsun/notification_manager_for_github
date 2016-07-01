@@ -18,13 +18,10 @@
  */
 package net.saga.github.notification.logger.vo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.net.URL;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.JoinColumn;
@@ -51,7 +48,7 @@ public class Repository implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name="owner_login", referencedColumnName = "login")
+    @JoinColumn(name="owner_login", referencedColumnName = "login", columnDefinition = "varchar(255)")
     private GitHubUser owner;
 
     private String name;

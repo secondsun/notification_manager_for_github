@@ -7,7 +7,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Secured API</web-resource-name>
-            <url-pattern>/api/s/*</url-pattern>
+            <url-pattern>/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>USER</role-name>

@@ -8,9 +8,11 @@ package net.saga.github.notification.logger.realtime;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 import javax.websocket.CloseReason;
 import javax.websocket.EncodeException;
+import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -22,10 +24,12 @@ import net.saga.github.notification.logger.realtime.signal.NewNotificationSignal
 import net.saga.github.notification.logger.realtime.signal.NewNotificationSignal.NewNotificationEvent;
 import net.saga.github.notification.logger.realtime.signal.UpdatedNotificationSignal;
 import net.saga.github.notification.logger.realtime.signal.UpdatedNotificationSignal.UpdatedNotificationEvent;
-import net.saga.github.notification.logger.util.AccountUtils;
 import net.saga.github.notification.logger.vo.notification.Notification;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
 
-@ServerEndpoint("/api/s/realtime")
+@Stateless
+@ServerEndpoint(value = "/api/s/realtime", configurator = SecurityConfigurator.class, encoders = {NotificationCoder.class}, decoders = {NotificationCoder.class})
 public class Websocket {
 
     @Context
@@ -40,10 +44,11 @@ public class Websocket {
     }
 
     @OnOpen
-    public void myOnOpen(Session session) {
+    public void myOnOpen(Session session, EndpointConfig config) {
+        KeycloakPrincipal<KeycloakSecurityContext> userPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) config.getUserProperties().get("userPrincipal") ;
         System.out.println("WebSocket opened: " + session.getId());
         this.sesison = session;
-        this.userId = AccountUtils.loadUserName(securityContext);
+        this.userId = userPrincipal.getKeycloakSecurityContext().getIdToken().getPreferredUsername();
     }
 
     @OnClose

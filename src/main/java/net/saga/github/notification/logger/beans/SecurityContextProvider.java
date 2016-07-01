@@ -36,5 +36,6 @@ public class SecurityContextProvider implements ContainerRequestFilter {
     public void filter(ContainerRequestContext context) throws IOException {
         SecurityContext securityContext = context.getSecurityContext();
         ResteasyProviderFactory.pushContext(SecurityContext.class, securityContext);
+        
     }  
 }

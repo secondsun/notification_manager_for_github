@@ -34,6 +34,7 @@ public class ApplicationConfig extends Application {
         resources.add(net.saga.github.notification.logger.beans.SecurityContextProvider.class);
         resources.add(net.saga.github.notification.logger.rest.Accounts.class);
         resources.add(net.saga.github.notification.logger.rest.Notifications.class);
+        resources.add(net.saga.github.notification.logger.beans.JacksonProvider.class);
         //addRestResourceClasses(resources);
         return resources;
     }
@@ -45,6 +46,7 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(net.saga.github.notification.logger.beans.JacksonProvider.class);
         resources.add(net.saga.github.notification.logger.beans.SecurityContextProvider.class);
         resources.add(net.saga.github.notification.logger.rest.Accounts.class);
         resources.add(net.saga.github.notification.logger.rest.Notifications.class);

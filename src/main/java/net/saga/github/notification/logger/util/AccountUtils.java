@@ -44,7 +44,11 @@ public final class AccountUtils {
             KeycloakPrincipal<KeycloakSecurityContext> kp = (KeycloakPrincipal<KeycloakSecurityContext>) securityContext.getUserPrincipal();
 
             // this is how to get the real userName (or rather the login name)
+            if (kp.getKeycloakSecurityContext().getIdToken() == null) {
+                userName = kp.getKeycloakSecurityContext().getToken().getPreferredUsername();
+            } else {
             userName = kp.getKeycloakSecurityContext().getIdToken().getPreferredUsername();
+            }
         }
         
         return userName;

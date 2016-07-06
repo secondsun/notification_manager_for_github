@@ -6,12 +6,13 @@
 package net.saga.github.notification.logger.realtime;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;
 import javax.websocket.CloseReason;
-import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
@@ -29,14 +30,10 @@ import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 
 @Stateless
-@ServerEndpoint(value = "/api/s/realtime", configurator = SecurityConfigurator.class, encoders = {NotificationCoder.class}, decoders = {NotificationCoder.class})
+@ServerEndpoint(value = "/api/wss/realtime", configurator = SecurityConfigurator.class, encoders = {NotificationCoder.class}, decoders = {NotificationCoder.class})
 public class Websocket {
 
-    @Context
-    private SecurityContext securityContext;
-
-    private String userId;
-    private Session sesison;
+    private static final Map<Session, String> sessionMaps = new HashMap<>();
 
     @OnMessage
     public String onMessage(String message, Session webSocketSession) {
@@ -45,38 +42,44 @@ public class Websocket {
 
     @OnOpen
     public void myOnOpen(Session session, EndpointConfig config) {
-        KeycloakPrincipal<KeycloakSecurityContext> userPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) config.getUserProperties().get("userPrincipal") ;
+        KeycloakPrincipal<KeycloakSecurityContext> userPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) config.getUserProperties().get("userPrincipal");
         System.out.println("WebSocket opened: " + session.getId());
-        this.sesison = session;
-        this.userId = userPrincipal.getKeycloakSecurityContext().getIdToken().getPreferredUsername();
+        String userId = userPrincipal.getKeycloakSecurityContext().getToken().getPreferredUsername();
+        sessionMaps.put(session, userId);
+
     }
 
     @OnClose
     public void myOnClose(CloseReason reason, Session webSocketSession) {
         System.out.println("Closing a WebSocket due to " + reason.getReasonPhrase());
-        this.sesison = null;
+        sessionMaps.remove(webSocketSession);
     }
 
     public void handleNewNotification(@Observes @NewNotificationEvent NewNotificationSignal signal) {
         Notification note = signal.getNotification();
-        if (note.getUserId().equals(userId)) {
-            try {
-                sesison.getBasicRemote().sendObject(note);
-            } catch (IOException | EncodeException ex) {
-                Logger.getLogger(Websocket.class.getName()).log(Level.SEVERE, null, ex);
+        sessionMaps.entrySet().forEach((entry) -> {
+            if (note.getUserId().equals(entry.getValue())) {
+                try {
+                    entry.getKey().getBasicRemote().sendText("New Notification");
+                } catch (IOException ex) {
+                    Logger.getLogger(Websocket.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        }
+        });
+
     }
 
     public void handleUpdatedNotification(@Observes @UpdatedNotificationEvent UpdatedNotificationSignal signal) {
         Notification note = signal.getNotification();
-        if (note.getUserId().equals(userId)) {
-            try {
-                sesison.getBasicRemote().sendObject(note);
-            } catch (IOException | EncodeException ex) {
-                Logger.getLogger(Websocket.class.getName()).log(Level.SEVERE, null, ex);
+        sessionMaps.entrySet().forEach((entry) -> {
+            if (note.getUserId().equals(entry.getValue())) {
+                try {
+                    entry.getKey().getBasicRemote().sendText("New Notification");
+                } catch (IOException ex) {
+                    Logger.getLogger(Websocket.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        }
+        });
 
     }
 }

@@ -48,7 +48,7 @@ public class NotificationPoller {
     private GitHubRESTClient githubClient;
 
     
-    @Schedule(minute = "*/1", hour = "*")
+    @Schedule(minute = "*", hour = "*", second = "*/15")
     public void update() {
         List<ApplicationAccount> accounts = accountDao.findAll();
         accounts.forEach((account) -> {
@@ -59,6 +59,7 @@ public class NotificationPoller {
                             .setSince(metaData.getLastTested())
                             .setParticipating(false)
                             .setAll(true)
+                            .setBefore(ZonedDateTime.now().plusDays(1))
                             .createGitHubNotificationRequest();
 
                     List<Notification> notifications = new ArrayList<>();

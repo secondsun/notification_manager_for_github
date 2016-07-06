@@ -26,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import net.saga.github.notification.logger.vo.ApplicationAccount;
 
@@ -40,7 +41,7 @@ public class NotificationMetaData implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private ApplicationAccount applicationAccount;
 
     private int rateLimit;
